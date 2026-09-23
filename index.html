@@ -1207,6 +1207,8 @@
   // 暫存「還沒送出」的預約資料，等使用者填完訂金後五碼再一起送出
   let pendingReservationData = null;
 
+  let serviceDisabled = false;
+
 
   /* ==================================================
      初始化
@@ -1279,72 +1281,45 @@
   }
 
 
-  async function ensureMonthAvailability(year, month) {
+ async function ensureMonthAvailability(year, month) {
 
-    const key =
-      toYearMonthStr(year, month);
+  const key = toYearMonthStr(year, month);
 
+  if (key === monthAvailabilityKey) {
+    return;
+  }
 
-    if (key === monthAvailabilityKey) {
+  try {
 
-      return;
+    const result = await callGAS('getAvailableDatesInMonth', { yearMonth: key });
 
-    }
+    if (result && result.success) {
 
+      monthAvailability = result.dates || {};
+      monthAvailabilityFailed = false;
 
-    try {
-
-      const result =
-        await callGAS(
-          'getAvailableDatesInMonth',
-          {
-            yearMonth:
-              key
-          }
-        );
-
-
-      if (
-        result &&
-        result.success
-      ) {
-
-        monthAvailability =
-          result.dates || {};
-
-        monthAvailabilityFailed =
-          false;
-
-      } else {
-
-        monthAvailability = {};
-
-        monthAvailabilityFailed =
-          true;
-
-      }
-
-
-    } catch (error) {
-
-      console.error(
-        'ensureMonthAvailability ERROR:',
-        error
-      );
-
+    } else {
 
       monthAvailability = {};
+      monthAvailabilityFailed = true;
 
-      monthAvailabilityFailed =
-        true;
-
+      // 明確是訂閱停用（不是單純網路問題），整頁蓋上提示
+      if (result && result.disabled) {
+        serviceDisabled = true;
+        showServiceDisabledOverlay();
+      }
     }
 
+  } catch (error) {
 
-    monthAvailabilityKey =
-      key;
+    console.error('ensureMonthAvailability ERROR:', error);
 
+    monthAvailability = {};
+    monthAvailabilityFailed = true;
   }
+
+  monthAvailabilityKey = key;
+}
 
 
   async function renderCalendar() {
@@ -1513,10 +1488,7 @@
           ? monthAvailability[dateStr]
           : false;
 
-      const isUnavailable =
-        monthAvailabilityFailed
-          ? false
-          : !hasAvailability;
+const isUnavailable = monthAvailabilityFailed ? true : !hasAvailability;
 
 
       const isDisabled =
@@ -2686,6 +2658,23 @@
     });
 
   }
+
+  function showServiceDisabledOverlay() {
+
+  const card = document.querySelector('.booking-card');
+
+  card.innerHTML =
+
+    '<div class="success">' +
+
+      '<div class="success-title">🛠 服務暫停中</div>' +
+
+      '<div class="success-notice">' +
+        '目前線上預約暫停使用，請直接透過 LINE 官方帳號或電話與我們聯繫，造成不便敬請見諒。' +
+      '</div>' +
+
+    '</div>';
+}
 
 
   /* ==================================================
