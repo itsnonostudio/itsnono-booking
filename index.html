@@ -1214,16 +1214,32 @@
      初始化
   ================================================== */
 
-  window.addEventListener(
-    'load',
-    function () {
+window.addEventListener('load', function () {
 
-      renderCalendar();
+  renderCalendar();     // 月曆該多快還是多快，不受影響
+  initLIFF();
+  checkServiceStatus(); // 並行打出去，不 await、不卡住上面兩行
 
-      initLIFF();
+});
 
+  async function checkServiceStatus() {
+
+  try {
+
+    const result = await callGAS('checkStatus', {});
+
+    if (result && result.success && result.active === false) {
+
+      serviceDisabled = true;
+      showServiceDisabledOverlay();
     }
-  );
+
+  } catch (error) {
+
+    console.error('checkServiceStatus ERROR:', error);
+    // 查詢本身失敗就不顯示暫停畫面，避免網路問題誤傷正常客戶
+  }
+}
 
 
   /* ==================================================
@@ -1302,12 +1318,6 @@
 
       monthAvailability = {};
       monthAvailabilityFailed = true;
-
-      // 明確是訂閱停用（不是單純網路問題），整頁蓋上提示
-      if (result && result.disabled) {
-        serviceDisabled = true;
-        showServiceDisabledOverlay();
-      }
     }
 
   } catch (error) {
