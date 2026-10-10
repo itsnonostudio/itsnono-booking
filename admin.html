@@ -7,62 +7,216 @@
 <title>預約後台</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#E9E5DD;--card:#F6F3EE;--pill:#F1EEE8;--ink:#1F1B17;--mute:#8A8478;--line:#DAD4C9;--warn:#A8741A;--ok:#5F7355;--bad:#A8473B;--serif:"Noto Serif TC","Songti TC","PMingLiU",serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171512;--card:#221F1A;--pill:#2A261F;--ink:#EDE8DF;--mute:#9A9487;--line:#37322A;--warn:#E0B15A;--ok:#9DB592;--bad:#E58C80}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 system-ui,-apple-system,"PingFang TC","Noto Sans TC",sans-serif}
-main{max-width:560px;margin:0 auto;padding:18px 14px 100px}
-.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:22px}
-.logo{font-family:var(--serif);font-size:19px;letter-spacing:.32em;font-weight:500}
-.logo small{display:block;font-size:11px;letter-spacing:.2em;color:var(--mute);font-family:system-ui,sans-serif}
-h1{font:600 28px/1.25 var(--serif);margin:0 0 6px;letter-spacing:.04em}
-.sub{color:var(--mute);margin:0 0 16px;font-size:14px}
-.pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin-bottom:12px}
-.pill{flex:none;padding:9px 18px;border-radius:99px;border:0;background:var(--pill);color:var(--ink);font-size:14px;font-family:inherit;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.pill.on{background:var(--ink);color:var(--card)}
-.pill.s{padding:6px 14px;font-size:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{justify-content:space-between}
-.mute{color:var(--mute);font-size:13px}
-input,select,textarea{padding:10px 11px;border-radius:11px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;font-family:inherit;min-width:0}
-textarea{width:100%;resize:vertical;margin-top:8px}
-input.w{flex:1}
-.b{padding:10px 16px;border-radius:99px;border:0;background:var(--ink);color:var(--card);font-size:14px;font-family:inherit;cursor:pointer}
-.b.g{background:none;border:1px solid var(--line);color:var(--ink)}
-.b.d{background:none;border:1px solid var(--bad);color:var(--bad)}
-.b.sm{padding:6px 12px;font-size:13px}
-button:disabled{opacity:.35;cursor:default}
-.tag{font-size:12px;padding:1px 9px;border-radius:99px;border:1px solid currentColor}
-.t-待確認{color:var(--warn)}.t-已預約{color:var(--ok)}.t-已取消{color:var(--mute)}
-.bk{padding:12px 0;border-bottom:1px solid var(--line)}.bk:last-child{border:0;padding-bottom:0}
-.bk.x{opacity:.55}
-.dh{display:flex;justify-content:space-between;font-family:var(--serif);font-weight:600;margin:16px 0 4px}
-.dh.now{color:var(--warn)}
-.none{margin:4px 0 0}
-.nav{display:flex;align-items:center;justify-content:space-between;margin:12px 0}
-.nav b{font-family:var(--serif);font-size:17px}
-.nav button.r{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--ink);font-size:18px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
-.wh{font-size:12px;color:var(--mute);padding:4px 0}
-.c{aspect-ratio:1/1.05;border:0;border-radius:12px;background:none;color:var(--ink);font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;padding:0}
-.c b{font-weight:500;font-size:15px}
-.c i{font-style:normal;font-size:11px;color:var(--mute);min-height:15px;line-height:15px}
-.c i.n{background:var(--line);color:var(--ink);border-radius:99px;padding:0 7px}
-.c i.p{background:var(--warn);color:var(--card)}
-.c.today b{text-decoration:underline}
-.c.sel{background:var(--ink);color:var(--card)}.c.sel i{color:var(--card)}.c.sel i.n{background:var(--card);color:var(--ink)}
-.c.dy{box-shadow:inset 0 -3px 0 var(--warn)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
-.chip{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--ink);font-size:14px;font-family:inherit;cursor:pointer}
-.chip.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
-.f3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-.f3 label{font-size:12px;color:var(--mute)}.f3 input{width:100%;margin-top:3px}
-.bar{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}
-.bar .b{display:block;width:100%;max-width:560px;margin:0 auto;padding:13px}
-#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--card);padding:9px 18px;border-radius:99px;font-size:14px;max-width:90%;z-index:9}
-a{color:inherit}
-:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
-[hidden]{display:none!important}
+/* ===== ITSNONO_STUDIO 品牌視覺統一 ===== */
+:root {
+  --bg: #FAF8F4;
+  --card: #FFFFFF;
+  --pill: #F5F1EB;
+  --ink: #51433C;
+  --mute: #8B7C73;
+  --line: #E0D3C8;
+  --warn: #A9825F;
+  --ok: #75856A;
+  --bad: #B66B5E;
+
+  --serif: "Noto Serif TC", "Songti TC",
+           "PMingLiU", serif;
+}
+
+/* 整體背景與字體 */
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    "PingFang TC",
+    "Noto Sans TC",
+    "Microsoft JhengHei",
+    sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 主要頁面 */
+main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 16px 110px;
+}
+
+/* 品牌標題區 */
+.top {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+}
+
+.logo {
+  color: #6B5548;
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.logo small {
+  color: var(--mute);
+  letter-spacing: 0.12em;
+}
+
+/* 頁面標題 */
+h1 {
+  color: #59473E;
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+
+.sub {
+  color: var(--mute);
+  line-height: 1.8;
+}
+
+/* 卡片 */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(92, 69, 53, 0.035);
+}
+
+/* 按鈕 */
+.b {
+  background: #6B5548;
+  color: #FFFFFF;
+  border: 1px solid #6B5548;
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: background 0.2s ease;
+}
+
+.b.g {
+  background: #FFFFFF;
+  color: #6B5548;
+  border-color: var(--line);
+}
+
+.b.d {
+  background: transparent;
+  color: var(--bad);
+  border-color: #D9B8AE;
+}
+
+/* 分類膠囊按鈕 */
+.pill {
+  background: #F4EFE8;
+  color: #6B5548;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  padding: 10px 18px;
+}
+
+.pill.on {
+  background: #6B5548;
+  color: #FFFFFF;
+}
+
+/* 表單欄位 */
+input,
+select,
+textarea {
+  background: #FFFFFF;
+  color: var(--ink);
+  border: 1px solid #DCCBC0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  padding: 12px 14px;
+  outline: none;
+  max-width: 100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #A58A76;
+  box-shadow: 0 0 0 3px rgba(165, 138, 118, 0.12);
+}
+
+/* 日期與預約列表 */
+.bk {
+  border-bottom: 1px solid #EAE2DA;
+  padding: 15px 0;
+}
+
+.dh {
+  color: #6B5548;
+  font-family: var(--serif);
+  font-weight: 700;
+  margin: 18px 0 6px;
+}
+
+.dh.now {
+  color: #A9825F;
+}
+
+/* 日期、時間選項 */
+.chip {
+  background: #FFFFFF;
+  color: #6B5548;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.chip.on {
+  background: #6B5548;
+  color: #FFFFFF;
+  border-color: #6B5548;
+}
+
+/* 狀態標籤 */
+.tag {
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 底部固定操作列 */
+.bar {
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+
+/* 手機版細節 */
+@media (max-width: 480px) {
+  main {
+    padding: 20px 14px 100px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  .card {
+    padding: 17px;
+    border-radius: 20px;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+}
 </style>
 </head>
 <body>
