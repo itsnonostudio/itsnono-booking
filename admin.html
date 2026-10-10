@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>預約後台</title>
+<title>ITSNONO｜預約後台</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
+
 <style>
 :root {
+  color-scheme: light;
   --bg: #FAF8F5;
   --card: #FFFFFF;
   --pill: #F5F0EA;
@@ -20,44 +22,57 @@
   --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #171512;
-    --card: #221F1A;
-    --pill: #2A261F;
-    --ink: #EDE8DF;
-    --mute: #9A9487;
-    --line: #37322A;
-    --warn: #E0B15A;
-    --ok: #9DB592;
-    --bad: #E58C80;
-  }
-}
-
 * {
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--bg);
   color: var(--ink);
-  font: 400 15px/1.55 system-ui, -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+  font: 400 15px/1.65 system-ui, -apple-system, BlinkMacSystemFont,
+    "PingFang TC", "Noto Sans TC", sans-serif;
+}
+
+button, input, select, textarea {
+  box-sizing: border-box;
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 main {
+  width: 100%;
   max-width: 560px;
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 18px 14px 100px;
+  padding: 22px 16px 110px;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+/* 品牌標題 */
 .top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 14px;
+  gap: 12px;
+  padding-bottom: 18px;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 22px;
+  margin-bottom: 26px;
 }
 
 .logo {
@@ -65,72 +80,103 @@ main {
   font-size: 19px;
   letter-spacing: .32em;
   font-weight: 500;
+  color: var(--ink);
 }
 
 .logo small {
   display: block;
+  margin-top: 3px;
   font-size: 11px;
   letter-spacing: .2em;
   color: var(--mute);
   font-family: system-ui, sans-serif;
 }
 
+/* 登入 */
+#login {
+  padding-top: 46px;
+}
+
+#login > .logo {
+  padding: 0 4px 20px;
+}
+
+#login .card {
+  margin-top: 12px;
+}
+
+/* 標題 */
 h1 {
-  font: 600 28px/1.25 var(--serif);
-  margin: 0 0 6px;
+  font: 600 28px/1.35 var(--serif);
+  margin: 0 0 8px;
   letter-spacing: .04em;
+  color: var(--ink);
 }
 
 .sub {
   color: var(--mute);
-  margin: 0 0 16px;
+  margin: 0 0 22px;
   font-size: 14px;
+  line-height: 1.8;
 }
 
+/* 頁籤 */
 .pills {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 2px 2px 6px;
-  margin-bottom: 12px;
+  padding: 3px 2px 9px;
+  margin: 0 0 18px;
+  scrollbar-width: none;
+}
+
+.pills::-webkit-scrollbar {
+  display: none;
 }
 
 .pill {
-  flex: none;
-  padding: 9px 18px;
+  flex: 0 0 auto;
+  padding: 10px 17px;
+  border: 1px solid var(--line);
   border-radius: 99px;
-  border: 0;
   background: var(--pill);
   color: var(--ink);
   font-size: 14px;
   font-family: inherit;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+  white-space: nowrap;
+  transition: background .2s, color .2s;
 }
 
 .pill.on {
   background: var(--ink);
+  border-color: var(--ink);
   color: var(--card);
 }
 
 .pill.s {
-  padding: 6px 14px;
+  padding: 7px 13px;
   font-size: 13px;
 }
 
+/* 卡片框線 */
 .card {
+  min-width: 0;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(81, 67, 60, .035);
 }
 
+/* 橫向排列 */
 .row {
   display: flex;
-  gap: 8px;
+  gap: 9px;
   align-items: center;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .sp {
@@ -142,67 +188,91 @@ h1 {
   font-size: 13px;
 }
 
+/* 表單 */
 input,
 select,
 textarea {
-  padding: 10px 11px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 11px 12px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--bg);
   color: var(--ink);
   font-size: 16px;
   font-family: inherit;
-  min-width: 0;
+  outline: none;
 }
 
-textarea {
-  width: 100%;
-  resize: vertical;
-  margin-top: 8px;
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--mute);
+  box-shadow: 0 0 0 3px rgba(139, 124, 115, .10);
 }
 
 input.w {
-  flex: 1;
+  flex: 1 1 160px;
+  width: 100%;
 }
 
+textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  margin-top: 10px;
+  line-height: 1.7;
+}
+
+/* 按鈕 */
 .b {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
   padding: 10px 16px;
+  border: 1px solid var(--ink);
   border-radius: 99px;
-  border: 0;
   background: var(--ink);
   color: var(--card);
   font-size: 14px;
   font-family: inherit;
+  line-height: 1.5;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .b.g {
-  background: none;
-  border: 1px solid var(--line);
+  background: var(--card);
+  border-color: var(--line);
   color: var(--ink);
 }
 
 .b.d {
-  background: none;
-  border: 1px solid var(--bad);
+  background: var(--card);
+  border-color: var(--bad);
   color: var(--bad);
 }
 
 .b.sm {
-  padding: 6px 12px;
+  padding: 7px 12px;
   font-size: 13px;
 }
 
 button:disabled {
-  opacity: .35;
+  opacity: .4;
   cursor: default;
 }
 
+/* 狀態標籤 */
 .tag {
+  display: inline-block;
+  flex: 0 0 auto;
   font-size: 12px;
-  padding: 1px 9px;
+  padding: 2px 10px;
   border-radius: 99px;
   border: 1px solid currentColor;
+  white-space: nowrap;
 }
 
 .t-待確認 {
@@ -217,9 +287,14 @@ button:disabled {
   color: var(--mute);
 }
 
+/* 預約項目 */
 .bk {
-  padding: 12px 0;
+  padding: 15px 0;
   border-bottom: 1px solid var(--line);
+}
+
+.bk:first-child {
+  padding-top: 2px;
 }
 
 .bk:last-child {
@@ -228,15 +303,34 @@ button:disabled {
 }
 
 .bk.x {
-  opacity: .55;
+  opacity: .6;
+}
+
+.bk .row {
+  gap: 8px;
+}
+
+.bk a {
+  color: var(--ink);
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.bk .mute {
+  margin-top: 4px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 
 .dh {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px;
   font-family: var(--serif);
   font-weight: 600;
-  margin: 16px 0 4px;
+  margin: 20px 0 7px;
 }
 
 .dh.now {
@@ -244,57 +338,66 @@ button:disabled {
 }
 
 .none {
-  margin: 4px 0 0;
+  margin: 8px 0 2px;
+  padding: 10px 0;
 }
 
+/* 日期導覽 */
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 12px 0;
+  gap: 8px;
+  margin: 14px 0;
 }
 
 .nav b {
   font-family: var(--serif);
-  font-size: 17px;
+  font-size: 16px;
+  text-align: center;
 }
 
 .nav button.r {
-  width: 36px;
-  height: 36px;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   border: 1px solid var(--line);
-  background: none;
+  background: var(--card);
   color: var(--ink);
-  font-size: 18px;
+  font-size: 21px;
+  line-height: 1;
   cursor: pointer;
 }
 
+/* 月曆 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
   text-align: center;
 }
 
 .wh {
   font-size: 12px;
   color: var(--mute);
-  padding: 4px 0;
+  padding: 5px 0;
 }
 
 .c {
+  width: 100%;
+  min-width: 0;
   aspect-ratio: 1 / 1.05;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 12px;
-  background: none;
+  background: transparent;
   color: var(--ink);
   font: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+  gap: 2px;
   cursor: pointer;
   padding: 0;
 }
@@ -313,7 +416,7 @@ button:disabled {
 }
 
 .c i.n {
-  background: var(--line);
+  background: var(--pill);
   color: var(--ink);
   border-radius: 99px;
   padding: 0 7px;
@@ -321,11 +424,12 @@ button:disabled {
 
 .c i.p {
   background: var(--warn);
-  color: var(--card);
+  color: #fff;
 }
 
 .c.today b {
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .c.sel {
@@ -346,18 +450,24 @@ button:disabled {
   box-shadow: inset 0 -3px 0 var(--warn);
 }
 
+.c:disabled {
+  opacity: .25;
+  cursor: default;
+}
+
+/* 時段選擇 */
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 10px 0;
+  margin: 14px 0;
 }
 
 .chip {
-  padding: 8px 14px;
+  padding: 9px 14px;
   border-radius: 99px;
   border: 1px solid var(--line);
-  background: none;
+  background: var(--card);
   color: var(--ink);
   font-size: 14px;
   font-family: inherit;
@@ -370,41 +480,53 @@ button:disabled {
   border-color: var(--ink);
 }
 
+/* 服務價格欄位 */
 .f3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin: 10px 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin: 14px 0;
 }
 
 .f3 label {
+  display: block;
+  min-width: 0;
   font-size: 12px;
+  line-height: 1.7;
   color: var(--mute);
 }
 
 .f3 input {
+  display: block;
   width: 100%;
-  margin-top: 3px;
+  min-width: 0;
+  margin-top: 5px;
+  padding: 10px 7px;
 }
 
+/* 底部儲存列 */
 .bar {
   position: fixed;
+  z-index: 5;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
-  background: var(--card);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: rgba(255, 255, 255, .96);
   border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 18px rgba(81, 67, 60, .06);
+  backdrop-filter: blur(12px);
 }
 
 .bar .b {
-  display: block;
+  display: flex;
   width: 100%;
-  max-width: 560px;
+  max-width: 528px;
   margin: 0 auto;
   padding: 13px;
 }
 
+/* 提示訊息 */
 #toast {
   position: fixed;
   left: 50%;
@@ -412,11 +534,14 @@ button:disabled {
   transform: translateX(-50%);
   background: var(--ink);
   color: var(--card);
-  padding: 9px 18px;
+  padding: 11px 20px;
+  border: 1px solid var(--line);
   border-radius: 99px;
   font-size: 14px;
-  max-width: 90%;
-  z-index: 9;
+  max-width: calc(100% - 32px);
+  z-index: 20;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, .12);
+  text-align: center;
 }
 
 a {
@@ -425,91 +550,199 @@ a {
 
 :focus-visible {
   outline: 2px solid var(--warn);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
-[hidden] {
-  display: none !important;
+/* 手機版 */
+@media (max-width: 380px) {
+  main {
+    padding: 18px 12px 105px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 15px;
+  }
+
+  .pill {
+    padding: 9px 13px;
+  }
+
+  .f3 {
+    gap: 6px;
+  }
+
+  .f3 input {
+    font-size: 15px;
+    padding: 9px 5px;
+  }
+
+  .bk .row.sp {
+    align-items: flex-start;
+  }
 }
 </style>
 </head>
+
 <body>
 <main>
-<div id="login" style="padding-top:40px">
+
+<div id="login">
   <div class="logo">ITSNONO<small>預約後台</small></div>
   <div class="card" style="margin-top:28px">
     <p class="mute" style="margin-top:0">輸入後台密碼</p>
-    <div class="row"><input id="pw" type="password" class="w" autocomplete="current-password"><button class="b" id="go">登入</button></div>
+    <div class="row">
+      <input id="pw" type="password" class="w" autocomplete="current-password">
+      <button class="b" id="go">登入</button>
+    </div>
   </div>
 </div>
 
 <div id="app" hidden>
-  <div class="top"><div class="logo">ITSNONO<small>預約後台</small></div><button class="b g sm" id="out">登出</button></div>
-  <h1 id="title"></h1><p class="sub" id="subt"></p>
+  <div class="top">
+    <div class="logo">ITSNONO<small>預約後台</small></div>
+    <button class="b g sm" id="out">登出</button>
+  </div>
+
+  <h1 id="title"></h1>
+  <p class="sub" id="subt"></p>
+
   <div class="pills" id="tabs">
-    <button class="pill on" data-t="bookings">預約系統</button><button class="pill" data-t="hours">營業時間</button><button class="pill" data-t="services">服務項目</button><button class="pill" data-t="members">會員資料</button>
+    <button class="pill on" data-t="bookings">預約系統</button>
+    <button class="pill" data-t="hours">營業時間</button>
+    <button class="pill" data-t="services">服務項目</button>
+    <button class="pill" data-t="members">會員資料</button>
   </div>
 
   <section id="p-bookings">
     <div class="row sp">
-      <div class="row" id="modes"><button class="pill s on" data-m="day">日</button><button class="pill s" data-m="week">週</button><button class="pill s" data-m="month">月</button></div>
-      <select id="bf"><option value="all">全部狀態</option><option>待確認</option><option>已預約</option><option>已取消</option></select>
+      <div class="row" id="modes">
+        <button class="pill s on" data-m="day">日</button>
+        <button class="pill s" data-m="week">週</button>
+        <button class="pill s" data-m="month">月</button>
+      </div>
+      <select id="bf">
+        <option value="all">全部狀態</option>
+        <option>待確認</option>
+        <option>已預約</option>
+        <option>已取消</option>
+      </select>
     </div>
-    <div class="nav"><button class="r" id="bp" aria-label="上一個">‹</button><div class="row"><b id="blabel"></b><button class="b g sm" id="bt">今天</button></div><button class="r" id="bn" aria-label="下一個">›</button></div>
+
+    <div class="nav">
+      <button class="r" id="bp" aria-label="上一個">‹</button>
+      <div class="row">
+        <b id="blabel"></b>
+        <button class="b g sm" id="bt">今天</button>
+      </div>
+      <button class="r" id="bn" aria-label="下一個">›</button>
+    </div>
+
     <div class="card" id="bview"></div>
   </section>
 
   <section id="p-hours" hidden>
     <div class="card">
-      <div class="nav" style="margin-top:0"><button class="r" id="hp" aria-label="上個月">‹</button><b id="hlabel"></b><button class="r" id="hn" aria-label="下個月">›</button></div>
+      <div class="nav" style="margin-top:0">
+        <button class="r" id="hp" aria-label="上個月">‹</button>
+        <b id="hlabel"></b>
+        <button class="r" id="hn" aria-label="下個月">›</button>
+      </div>
+
       <div id="hgrid"></div>
-      <div class="row" id="hsel" style="margin-top:12px"><span class="mute">快速選取</span><button class="pill s" data-s="wk">平日</button><button class="pill s" data-s="we">週末</button><button class="pill s" data-s="all">整月</button><button class="pill s" data-s="clear">清除</button></div>
-      <p class="mute" style="margin:10px 0 0">格子上的數字是當天時段數，「休」是休息，底線是尚未儲存。</p>
+
+      <div class="row" id="hsel" style="margin-top:16px">
+        <span class="mute">快速選取</span>
+        <button class="pill s" data-s="wk">平日</button>
+        <button class="pill s" data-s="we">週末</button>
+        <button class="pill s" data-s="all">整月</button>
+        <button class="pill s" data-s="clear">清除</button>
+      </div>
+
+      <p class="mute" style="margin:12px 0 0">
+        格子上的數字是當天時段數，「休」是休息，底線是尚未儲存。
+      </p>
     </div>
+
     <div class="card" id="hed" hidden>
       <b id="hcount"></b>
       <div class="chips" id="hchips"></div>
-      <div class="row"><input type="time" id="hT"><button class="b g sm" id="hAdd">加入新時段</button></div>
-      <div class="row" style="margin-top:14px"><button class="b" id="hApply">套用到所選日期</button><button class="b g" id="hOff">設為休息</button></div>
+      <div class="row">
+        <input type="time" id="hT">
+        <button class="b g sm" id="hAdd">加入新時段</button>
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button class="b" id="hApply">套用到所選日期</button>
+        <button class="b g" id="hOff">設為休息</button>
+      </div>
     </div>
   </section>
 
   <section id="p-services" hidden>
-    <div class="row" style="margin-bottom:10px" id="sf"><button class="pill s on" data-f="all">全部</button><button class="pill s" data-f="on">啟用中</button><button class="pill s" data-f="off">已停用</button><span style="flex:1"></span><button class="b sm" id="sAdd">新增服務</button></div>
+    <div class="row" style="margin-bottom:14px" id="sf">
+      <button class="pill s on" data-f="all">全部</button>
+      <button class="pill s" data-f="on">啟用中</button>
+      <button class="pill s" data-f="off">已停用</button>
+      <span style="flex:1"></span>
+      <button class="b sm" id="sAdd">新增服務</button>
+    </div>
     <div id="slist"></div>
   </section>
 
   <section id="p-members" hidden>
-    <input id="mq" style="width:100%;margin-bottom:12px" placeholder="搜尋姓名或電話">
+    <input id="mq" style="width:100%;margin-bottom:14px" placeholder="搜尋姓名或電話">
     <div id="mlist"></div>
   </section>
 
-  <div class="bar" id="bar" hidden><button class="b" id="save"></button></div>
+  <div class="bar" id="bar" hidden>
+    <button class="b" id="save"></button>
+  </div>
 </div>
+
 <div id="toast" hidden></div>
 </main>
 
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwkeaCm6K0-ZaRutf4aPVNF3H72tohOjYaIKB5fkEx3OM1hbb6BKiB5ATallGeXCSLR/exec";
+
 const $ = id => document.getElementById(id);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+}[c]));
+
 const WN = "日一二三四五六";
-const D = s => new Date(s + "T00:00:00Z"), fmt = d => d.toISOString().slice(0,10);
-const add = (s,n) => { const d = D(s); d.setUTCDate(d.getUTCDate()+n); return fmt(d); };
+const D = s => new Date(s + "T00:00:00Z");
+const fmt = d => d.toISOString().slice(0,10);
+const add = (s,n) => {
+  const d = D(s);
+  d.setUTCDate(d.getUTCDate()+n);
+  return fmt(d);
+};
 const wd = s => D(s).getUTCDay();
-const today = () => new Date().toLocaleDateString("sv-SE", {timeZone:"Asia/Taipei"});
+const today = () => new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Taipei"});
 const short = s => `${+s.slice(5,7)}/${+s.slice(8)}`;
 const md = s => `${short(s)}（${WN[wd(s)]}）`;
-const mStart = s => s.slice(0,8) + "01";
-const addMonth = (s,n) => { const d = D(mStart(s)); d.setUTCMonth(d.getUTCMonth()+n); return fmt(d); };
-const mDays = ms => new Date(Date.UTC(+ms.slice(0,4), +ms.slice(5,7), 0)).getUTCDate();
-const dayOf = (ms,d) => ms.slice(0,8) + String(d).padStart(2,"0");
+const mStart = s => s.slice(0,8)+"01";
+const addMonth = (s,n) => {
+  const d = D(mStart(s));
+  d.setUTCMonth(d.getUTCMonth()+n);
+  return fmt(d);
+};
+const mDays = ms => new Date(Date.UTC(+ms.slice(0,4),+ms.slice(5,7),0)).getUTCDate();
+const dayOf = (ms,d) => ms.slice(0,8)+String(d).padStart(2,"0");
 const fixPhone = p => /^9\d{8}$/.test(p) ? "0"+p : p;
 const mLabel = ms => `${ms.slice(0,4)} 年 ${+ms.slice(5,7)} 月`;
 
-let pw = ""; try { pw = sessionStorage.getItem("pw") || ""; } catch(e) {}
-let S = {hours:[], services:[], bookings:[], members:[]};
+let pw = "";
+try { pw = sessionStorage.getItem("pw") || ""; } catch(e) {}
+
+let S = {hours:[],services:[],bookings:[],members:[]};
 let svc = [], dirty = new Map(), tab = "bookings", tt;
+
 const TITLES = {
   bookings:["預約系統","所有預約都在這裡，可切換日、週、月檢視。"],
   hours:["營業時間","點選日期，挑好時段，一次套用到多天。"],
@@ -517,245 +750,485 @@ const TITLES = {
   members:["會員資料","客戶的聯絡方式，以及你自己的備註。"]
 };
 
-function toast(m){ const t=$("toast"); t.textContent=m; t.hidden=false; clearTimeout(tt); tt=setTimeout(()=>t.hidden=true,2800); }
-async function api(action, data = {}) {
-  if (GAS_URL.indexOf("http") !== 0) throw new Error("請先在 admin.html 設定 GAS_URL");
-  const res = await fetch(GAS_URL, {method:"POST", body: JSON.stringify({pw, action, ...data})});
+function toast(m) {
+  const t = $("toast");
+  t.textContent = m;
+  t.hidden = false;
+  clearTimeout(tt);
+  tt = setTimeout(()=>t.hidden=true,2800);
+}
+
+async function api(action,data={}) {
+  if (GAS_URL.indexOf("http") !== 0) {
+    throw new Error("請先在 admin.html 設定 GAS_URL");
+  }
+  const res = await fetch(GAS_URL,{
+    method:"POST",
+    body:JSON.stringify({pw,action,...data})
+  });
   const j = await res.json();
   if (!j.ok) throw new Error(j.error || "發生錯誤");
   return j;
 }
-async function load(){ S = await api("getAll"); svc = S.services.map(s => ({...s})); renderAll(); }
-async function login(){
+
+async function load() {
+  S = await api("getAll");
+  svc = S.services.map(s=>({...s}));
+  renderAll();
+}
+
+async function login() {
   pw = $("pw").value || pw;
   try {
     await api("login");
-    try { sessionStorage.setItem("pw", pw); } catch(e) {}
-    await load(); $("login").hidden = true; $("app").hidden = false; setTab("bookings");
-  } catch(e) { pw = ""; toast(e.message); }
+    try { sessionStorage.setItem("pw",pw); } catch(e) {}
+    await load();
+    $("login").hidden = true;
+    $("app").hidden = false;
+    setTab("bookings");
+  } catch(e) {
+    pw = "";
+    toast(e.message);
+  }
 }
+
 $("go").onclick = login;
-$("pw").onkeydown = e => { if (e.key === "Enter") login(); };
-$("out").onclick = () => { try { sessionStorage.removeItem("pw"); } catch(e) {} location.reload(); };
+$("pw").onkeydown = e => {
+  if (e.key === "Enter") login();
+};
+
+$("out").onclick = () => {
+  try { sessionStorage.removeItem("pw"); } catch(e) {}
+  location.reload();
+};
+
 if (pw) login();
 
-function setTab(t){
+function setTab(t) {
   tab = t;
-  document.querySelectorAll("#tabs .pill").forEach(x => x.classList.toggle("on", x.dataset.t === t));
-  ["bookings","hours","services","members"].forEach(k => $("p-"+k).hidden = k !== t);
-  $("title").textContent = TITLES[t][0]; $("subt").textContent = TITLES[t][1];
+  document.querySelectorAll("#tabs .pill").forEach(x=>{
+    x.classList.toggle("on",x.dataset.t===t);
+  });
+  ["bookings","hours","services","members"].forEach(k=>{
+    $("p-"+k).hidden = k!==t;
+  });
+  $("title").textContent = TITLES[t][0];
+  $("subt").textContent = TITLES[t][1];
   updBar();
 }
-$("tabs").onclick = e => { const b = e.target.closest("button[data-t]"); if (b) setTab(b.dataset.t); };
 
-/* ================= 預約：日／週／月 ================= */
-const V = {mode:"day", cur:today(), sel:today()};
-function bkByDate(){
+$("tabs").onclick = e => {
+  const b = e.target.closest("button[data-t]");
+  if (b) setTab(b.dataset.t);
+};
+
+/* 預約：日／週／月 */
+const V = {mode:"day",cur:today(),sel:today()};
+
+function bkByDate() {
   const f = $("bf").value, m = {};
-  S.bookings.forEach(b => { if (f !== "all" && b["狀態"] !== f) return; (m[b["日期"]] = m[b["日期"]] || []).push(b); });
-  for (const k in m) m[k].sort((a,b) => a["時間"].localeCompare(b["時間"]));
+  S.bookings.forEach(b=>{
+    if (f!=="all" && b["狀態"]!==f) return;
+    (m[b["日期"]]=m[b["日期"]]||[]).push(b);
+  });
+  for (const k in m) {
+    m[k].sort((a,b)=>a["時間"].localeCompare(b["時間"]));
+  }
   return m;
 }
-function bkCard(b){
-  const st = b["狀態"], id = esc(b["預約編號"]);
+
+function bkCard(b) {
+  const st=b["狀態"], id=esc(b["預約編號"]);
   return `<div class="bk ${st==="已取消"?"x":""}">
-    <div class="row sp"><b>${esc(b["時間"])}　${esc(b["服務"])}</b><span class="tag t-${esc(st)}">${esc(st)}</span></div>
+    <div class="row sp">
+      <b>${esc(b["時間"])}　${esc(b["服務"])}</b>
+      <span class="tag t-${esc(st)}">${esc(st)}</span>
+    </div>
     <div>${esc(b["姓名"])}・<a href="tel:${esc(fixPhone(b["電話"]))}">${esc(fixPhone(b["電話"]))}</a></div>
-    <div class="mute">$${esc(b["價格"])}${b["訂金後五碼"] ? "　後五碼 "+esc(b["訂金後五碼"]) : ""}${b["備註"] ? "　備註：" + esc(b["備註"]) : ""}</div>
-    <div class="row" style="margin-top:8px">
+    <div class="mute">$${esc(b["價格"])}${b["訂金後五碼"]?"　後五碼 "+esc(b["訂金後五碼"]):""}${b["備註"]?"　備註："+esc(b["備註"]):""}</div>
+    <div class="row" style="margin-top:10px">
       <button class="b sm" data-act="ok" data-id="${id}" ${st==="已預約"?"disabled":""}>確認</button>
       <button class="b sm d" data-act="no" data-id="${id}" ${st==="已取消"?"disabled":""}>取消</button>
-    </div></div>`;
+    </div>
+  </div>`;
 }
-const bkList = a => a && a.length ? a.map(bkCard).join("") : '<p class="mute none">這天沒有預約。</p>';
-function renderBookings(){
-  const m = bkByDate(), t = today(); let html = "", label = "";
-  if (V.mode === "day") { label = md(V.cur); html = bkList(m[V.cur]); }
-  else if (V.mode === "week") {
-    const s = add(V.cur, -wd(V.cur)); label = `${short(s)} – ${short(add(s,6))}`;
-    for (let i = 0; i < 7; i++) {
-      const ds = add(s,i), a = m[ds];
-      html += `<div class="dh ${ds===t?"now":""}" style="${i?"":"margin-top:0"}">${md(ds)}<span class="mute">${a ? a.length+" 筆" : ""}</span></div>` + (a ? a.map(bkCard).join("") : '<div class="mute none">—</div>');
+
+const bkList = a => a&&a.length
+  ? a.map(bkCard).join("")
+  : '<p class="mute none">這天沒有預約。</p>';
+
+function renderBookings() {
+  const m=bkByDate(), t=today();
+  let html="",label="";
+
+  if (V.mode==="day") {
+    label=md(V.cur);
+    html=bkList(m[V.cur]);
+  } else if (V.mode==="week") {
+    const s=add(V.cur,-wd(V.cur));
+    label=`${short(s)} – ${short(add(s,6))}`;
+    for (let i=0;i<7;i++) {
+      const ds=add(s,i),a=m[ds];
+      html+=`<div class="dh ${ds===t?"now":""}" style="${i?"":"margin-top:0"}">${md(ds)}<span class="mute">${a?a.length+" 筆":""}</span></div>`
+        +(a?a.map(bkCard).join(""):'<div class="mute none">—</div>');
     }
   } else {
-    const ms = mStart(V.cur); label = mLabel(ms);
-    let g = WN.split("").map(c => `<div class="wh">${c}</div>`).join("") + "<div></div>".repeat(wd(ms));
-    for (let d = 1; d <= mDays(ms); d++) {
-      const ds = dayOf(ms,d), a = (m[ds] || []).filter(x => x["狀態"] !== "已取消"), p = a.some(x => x["狀態"] === "待確認");
-      g += `<button class="c ${ds===t?"today":""} ${ds===V.sel?"sel":""}" data-day="${ds}"><b>${d}</b><i class="${a.length?"n":""} ${p?"p":""}">${a.length||""}</i></button>`;
+    const ms=mStart(V.cur);
+    label=mLabel(ms);
+    let g=WN.split("").map(c=>`<div class="wh">${c}</div>`).join("")
+      +"<div></div>".repeat(wd(ms));
+
+    for (let d=1;d<=mDays(ms);d++) {
+      const ds=dayOf(ms,d);
+      const a=(m[ds]||[]).filter(x=>x["狀態"]!=="已取消");
+      const p=a.some(x=>x["狀態"]==="待確認");
+      g+=`<button class="c ${ds===t?"today":""} ${ds===V.sel?"sel":""}" data-day="${ds}"><b>${d}</b><i class="${a.length?"n":""} ${p?"p":""}">${a.length||""}</i></button>`;
     }
-    html = `<div class="grid">${g}</div><div class="dh">${md(V.sel)}</div>${bkList(m[V.sel])}`;
-  }
-  $("blabel").textContent = label; $("bview").innerHTML = html;
-}
-function shift(n){
-  if (V.mode === "day") V.cur = add(V.cur, n);
-  else if (V.mode === "week") V.cur = add(V.cur, 7*n);
-  else { V.cur = addMonth(V.cur, n); V.sel = V.cur.slice(0,7) === today().slice(0,7) ? today() : V.cur; }
-  renderBookings();
-}
-$("bp").onclick = () => shift(-1); $("bn").onclick = () => shift(1);
-$("bt").onclick = () => { V.cur = V.sel = today(); renderBookings(); };
-$("bf").onchange = renderBookings;
-$("modes").onclick = e => {
-  const b = e.target.closest("button[data-m]"); if (!b) return;
-  if (b.dataset.m === "month") V.sel = V.cur; else if (V.mode === "month") V.cur = V.sel;
-  V.mode = b.dataset.m;
-  document.querySelectorAll("#modes .pill").forEach(x => x.classList.toggle("on", x === b));
-  renderBookings();
-};
-$("bview").onclick = async e => {
-  const c = e.target.closest("button[data-day]");
-  if (c) { V.sel = c.dataset.day; return renderBookings(); }
-  const b = e.target.closest("button[data-act]"); if (!b) return;
-  const ok = b.dataset.act === "ok", id = b.dataset.id;
-  const bk = S.bookings.find(x => String(x["預約編號"]) === id);
-  if (!ok && !confirm(`確定取消 ${bk["姓名"]} ${bk["日期"]} ${bk["時間"]} 的預約？`)) return;
-  b.disabled = true;
-  try {
-    const status = ok ? "已預約" : "已取消";
-    await api("setStatus", {id, status}); bk["狀態"] = status; renderBookings(); toast(ok ? "已確認" : "已取消");
-  } catch(err) { toast(err.message); b.disabled = false; }
-};
 
-/* ================= 營業時間：選日期＋選時段 ================= */
-const H = {ms:mStart(today()), sel:new Set(), pick:new Set(), extra:new Set()};
-function commonTimes(){
-  const c = {}; S.hours.forEach(h => h.slots && h.slots.split(",").forEach(t => c[t] = (c[t]||0)+1));
-  const top = Object.keys(c).sort((a,b) => c[b]-c[a]).slice(0,8);
-  return [...new Set([...top, ...H.extra, ...H.pick])].sort();
+    html=`<div class="grid">${g}</div><div class="dh">${md(V.sel)}</div>${bkList(m[V.sel])}`;
+  }
+
+  $("blabel").textContent=label;
+  $("bview").innerHTML=html;
 }
-function renderHours(){
-  const hm = {}; S.hours.forEach(h => hm[h.date] = h);
-  const t = today();
-  $("hlabel").textContent = mLabel(H.ms);
-  $("hp").disabled = H.ms <= mStart(t);
-  let g = WN.split("").map(c => `<div class="wh">${c}</div>`).join("") + "<div></div>".repeat(wd(H.ms));
-  for (let d = 1; d <= mDays(H.ms); d++) {
-    const ds = dayOf(H.ms,d), h = hm[ds];
-    const n = h ? (h.slots ? h.slots.split(",").length : "休") : "";
-    g += `<button class="c ${ds===t?"today":""} ${H.sel.has(ds)?"sel":""} ${dirty.has(ds)?"dy":""}" data-d="${ds}" ${ds<t?"disabled":""}><b>${d}</b><i>${n}</i></button>`;
+
+function shift(n) {
+  if (V.mode==="day") V.cur=add(V.cur,n);
+  else if (V.mode==="week") V.cur=add(V.cur,7*n);
+  else {
+    V.cur=addMonth(V.cur,n);
+    V.sel=V.cur.slice(0,7)===today().slice(0,7)?today():V.cur;
   }
-  $("hgrid").innerHTML = `<div class="grid">${g}</div>`;
-  $("hed").hidden = !H.sel.size;
-  $("hcount").textContent = `已選 ${H.sel.size} 天，請選擇時段`;
-  $("hchips").innerHTML = commonTimes().map(x => `<button class="chip ${H.pick.has(x)?"on":""}" data-t="${x}">${x}</button>`).join("");
+  renderBookings();
 }
-$("hp").onclick = () => { H.ms = addMonth(H.ms,-1); renderHours(); };
-$("hn").onclick = () => { H.ms = addMonth(H.ms,1); renderHours(); };
-$("hgrid").onclick = e => {
-  const b = e.target.closest("button[data-d]"); if (!b) return;
-  const ds = b.dataset.d;
-  if (H.sel.has(ds)) H.sel.delete(ds); else H.sel.add(ds);
-  if (H.sel.size === 1) {
-    const h = S.hours.find(x => x.date === [...H.sel][0]);
-    H.pick = new Set(h && h.slots ? h.slots.split(",") : []);
-  }
-  renderHours();
+
+$("bp").onclick=()=>shift(-1);
+$("bn").onclick=()=>shift(1);
+$("bt").onclick=()=>{
+  V.cur=V.sel=today();
+  renderBookings();
 };
-$("hsel").onclick = e => {
-  const b = e.target.closest("button[data-s]"); if (!b) return;
-  const k = b.dataset.s, t = today(); H.sel.clear();
-  if (k !== "clear") for (let d = 1; d <= mDays(H.ms); d++) {
-    const ds = dayOf(H.ms,d), w = wd(ds); if (ds < t) continue;
-    if (k === "all" || (k === "wk" && w > 0 && w < 6) || (k === "we" && (w === 0 || w === 6))) H.sel.add(ds);
-  }
-  renderHours();
-};
-$("hchips").onclick = e => {
-  const b = e.target.closest("button[data-t]"); if (!b) return;
-  const t = b.dataset.t; if (H.pick.has(t)) H.pick.delete(t); else H.pick.add(t);
-  renderHours();
-};
-$("hAdd").onclick = () => { const v = $("hT").value; if (!v) return toast("請先選一個時間"); H.extra.add(v); H.pick.add(v); renderHours(); };
-function applyHours(list){
-  const s = list.sort().join(","), n = H.sel.size;
-  H.sel.forEach(ds => {
-    dirty.set(ds, {date:ds, slots:s, note:null});
-    const ex = S.hours.find(h => h.date === ds);
-    if (ex) ex.slots = s; else S.hours.push({date:ds, slots:s, note:""});
+$("bf").onchange=renderBookings;
+
+$("modes").onclick=e=>{
+  const b=e.target.closest("button[data-m]");
+  if (!b) return;
+  if (b.dataset.m==="month") V.sel=V.cur;
+  else if (V.mode==="month") V.cur=V.sel;
+  V.mode=b.dataset.m;
+  document.querySelectorAll("#modes .pill").forEach(x=>{
+    x.classList.toggle("on",x===b);
   });
-  H.sel.clear(); renderHours(); updBar(); toast(`已套用到 ${n} 天，記得按下方儲存`);
-}
-$("hApply").onclick = () => H.pick.size ? applyHours([...H.pick]) : toast("請先選時段，或按「設為休息」");
-$("hOff").onclick = () => applyHours([]);
+  renderBookings();
+};
 
-/* ================= 服務項目 ================= */
-let SF = "all";
-const SK = ["服務名稱","價格","課程分鐘","緩衝分鐘","狀態"];
-const svcNorm = a => JSON.stringify(a.map(s => SK.map(k => String(s[k] ?? ""))));
-function renderServices(){
-  const h = svc.map((s,i) => {
-    if ((SF === "on" && s["狀態"] !== "啟用") || (SF === "off" && s["狀態"] !== "停用")) return "";
-    const f = (k,l) => `<label>${l}<input type="number" inputmode="numeric" data-i="${i}" data-k="${k}" value="${esc(s[k])}"></label>`;
+$("bview").onclick=async e=>{
+  const c=e.target.closest("button[data-day]");
+  if (c) {
+    V.sel=c.dataset.day;
+    return renderBookings();
+  }
+
+  const b=e.target.closest("button[data-act]");
+  if (!b) return;
+
+  const ok=b.dataset.act==="ok",id=b.dataset.id;
+  const bk=S.bookings.find(x=>String(x["預約編號"])===id);
+
+  if (!ok && !confirm(`確定取消 ${bk["姓名"]} ${bk["日期"]} ${bk["時間"]} 的預約？`)) return;
+
+  b.disabled=true;
+  try {
+    const status=ok?"已預約":"已取消";
+    await api("setStatus",{id,status});
+    bk["狀態"]=status;
+    renderBookings();
+    toast(ok?"已確認":"已取消");
+  } catch(err) {
+    toast(err.message);
+    b.disabled=false;
+  }
+};
+
+/* 營業時間 */
+const H={ms:mStart(today()),sel:new Set(),pick:new Set(),extra:new Set()};
+
+function commonTimes() {
+  const c={};
+  S.hours.forEach(h=>{
+    if (h.slots) h.slots.split(",").forEach(t=>c[t]=(c[t]||0)+1);
+  });
+  const top=Object.keys(c).sort((a,b)=>c[b]-c[a]).slice(0,8);
+  return [...new Set([...top,...H.extra,...H.pick])].sort();
+}
+
+function renderHours() {
+  const hm={};
+  S.hours.forEach(h=>hm[h.date]=h);
+  const t=today();
+
+  $("hlabel").textContent=mLabel(H.ms);
+  $("hp").disabled=H.ms<=mStart(t);
+
+  let g=WN.split("").map(c=>`<div class="wh">${c}</div>`).join("")
+    +"<div></div>".repeat(wd(H.ms));
+
+  for (let d=1;d<=mDays(H.ms);d++) {
+    const ds=dayOf(H.ms,d),h=hm[ds];
+    const n=h?(h.slots?h.slots.split(",").length:"休"):"";
+    g+=`<button class="c ${ds===t?"today":""} ${H.sel.has(ds)?"sel":""} ${dirty.has(ds)?"dy":""}" data-d="${ds}" ${ds<t?"disabled":""}><b>${d}</b><i>${n}</i></button>`;
+  }
+
+  $("hgrid").innerHTML=`<div class="grid">${g}</div>`;
+  $("hed").hidden=!H.sel.size;
+  $("hcount").textContent=`已選 ${H.sel.size} 天，請選擇時段`;
+  $("hchips").innerHTML=commonTimes().map(x=>`<button class="chip ${H.pick.has(x)?"on":""}" data-t="${x}">${x}</button>`).join("");
+}
+
+$("hp").onclick=()=>{
+  H.ms=addMonth(H.ms,-1);
+  renderHours();
+};
+$("hn").onclick=()=>{
+  H.ms=addMonth(H.ms,1);
+  renderHours();
+};
+
+$("hgrid").onclick=e=>{
+  const b=e.target.closest("button[data-d]");
+  if (!b) return;
+
+  const ds=b.dataset.d;
+  if (H.sel.has(ds)) H.sel.delete(ds);
+  else H.sel.add(ds);
+
+  if (H.sel.size===1) {
+    const h=S.hours.find(x=>x.date===[...H.sel][0]);
+    H.pick=new Set(h&&h.slots?h.slots.split(","):[]);
+  }
+  renderHours();
+};
+
+$("hsel").onclick=e=>{
+  const b=e.target.closest("button[data-s]");
+  if (!b) return;
+
+  const k=b.dataset.s,t=today();
+  H.sel.clear();
+
+  if (k!=="clear") {
+    for (let d=1;d<=mDays(H.ms);d++) {
+      const ds=dayOf(H.ms,d),w=wd(ds);
+      if (ds<t) continue;
+      if (k==="all"||(k==="wk"&&w>0&&w<6)||(k==="we"&&(w===0||w===6))) H.sel.add(ds);
+    }
+  }
+  renderHours();
+};
+
+$("hchips").onclick=e=>{
+  const b=e.target.closest("button[data-t]");
+  if (!b) return;
+  const t=b.dataset.t;
+  if (H.pick.has(t)) H.pick.delete(t);
+  else H.pick.add(t);
+  renderHours();
+};
+
+$("hAdd").onclick=()=>{
+  const v=$("hT").value;
+  if (!v) return toast("請先選一個時間");
+  H.extra.add(v);
+  H.pick.add(v);
+  renderHours();
+};
+
+function applyHours(list) {
+  const s=list.sort().join(","),n=H.sel.size;
+
+  H.sel.forEach(ds=>{
+    dirty.set(ds,{date:ds,slots:s,note:null});
+    const ex=S.hours.find(h=>h.date===ds);
+    if (ex) ex.slots=s;
+    else S.hours.push({date:ds,slots:s,note:""});
+  });
+
+  H.sel.clear();
+  renderHours();
+  updBar();
+  toast(`已套用到 ${n} 天，記得按下方儲存`);
+}
+
+$("hApply").onclick=()=>H.pick.size?applyHours([...H.pick]):toast("請先選時段，或按「設為休息」");
+$("hOff").onclick=()=>applyHours([]);
+
+/* 服務項目 */
+let SF="all";
+const SK=["服務名稱","價格","課程分鐘","緩衝分鐘","狀態"];
+const svcNorm=a=>JSON.stringify(a.map(s=>SK.map(k=>String(s[k]??""))));
+
+function renderServices() {
+  const h=svc.map((s,i)=>{
+    if ((SF==="on"&&s["狀態"]!=="啟用")||(SF==="off"&&s["狀態"]!=="停用")) return "";
+
+    const f=(k,l)=>`<label>${l}<input type="number" inputmode="numeric" data-i="${i}" data-k="${k}" value="${esc(s[k])}"></label>`;
+
     return `<div class="card">
       <input style="width:100%;font-weight:600" placeholder="服務名稱" data-i="${i}" data-k="服務名稱" value="${esc(s["服務名稱"])}">
       <div class="f3">${f("價格","價格")}${f("課程分鐘","課程分鐘")}${f("緩衝分鐘","緩衝分鐘")}</div>
-      <div class="row sp"><select data-i="${i}" data-k="狀態"><option ${s["狀態"]==="啟用"?"selected":""}>啟用</option><option ${s["狀態"]==="停用"?"selected":""}>停用</option></select>
-      <button class="b g sm d" data-del="${i}">刪除</button></div></div>`;
+      <div class="row sp">
+        <select data-i="${i}" data-k="狀態">
+          <option ${s["狀態"]==="啟用"?"selected":""}>啟用</option>
+          <option ${s["狀態"]==="停用"?"selected":""}>停用</option>
+        </select>
+        <button class="b g sm d" data-del="${i}">刪除</button>
+      </div>
+    </div>`;
   }).join("");
-  $("slist").innerHTML = h || '<p class="mute">沒有符合的服務。</p>';
+
+  $("slist").innerHTML=h||'<p class="mute">沒有符合的服務。</p>';
 }
-$("slist").oninput = $("slist").onchange = e => {
-  const el = e.target.closest("[data-i]"); if (!el) return;
-  svc[+el.dataset.i][el.dataset.k] = el.value; updBar();
+
+$("slist").oninput=$("slist").onchange=e=>{
+  const el=e.target.closest("[data-i]");
+  if (!el) return;
+  svc[+el.dataset.i][el.dataset.k]=el.value;
+  updBar();
 };
-$("slist").onclick = e => {
-  const b = e.target.closest("button[data-del]"); if (!b) return;
-  const i = +b.dataset.del;
-  if (!confirm(`確定刪除「${svc[i]["服務名稱"] || "未命名服務"}」？\n已經存在的預約紀錄不受影響。`)) return;
-  svc.splice(i,1); renderServices(); updBar();
+
+$("slist").onclick=e=>{
+  const b=e.target.closest("button[data-del]");
+  if (!b) return;
+
+  const i=+b.dataset.del;
+  if (!confirm(`確定刪除「${svc[i]["服務名稱"]||"未命名服務"}」？\n已經存在的預約紀錄不受影響。`)) return;
+
+  svc.splice(i,1);
+  renderServices();
+  updBar();
 };
-$("sf").onclick = e => {
-  const b = e.target.closest("button[data-f]"); if (!b) return;
-  SF = b.dataset.f;
-  document.querySelectorAll("#sf .pill").forEach(x => x.classList.toggle("on", x === b));
+
+$("sf").onclick=e=>{
+  const b=e.target.closest("button[data-f]");
+  if (!b) return;
+
+  SF=b.dataset.f;
+  document.querySelectorAll("#sf .pill").forEach(x=>{
+    x.classList.toggle("on",x===b);
+  });
   renderServices();
 };
-$("sAdd").onclick = () => { svc.push({"服務名稱":"","價格":"","課程分鐘":"","緩衝分鐘":"0","狀態":"啟用"}); SF = "all"; document.querySelectorAll("#sf .pill").forEach(x => x.classList.toggle("on", x.dataset.f === "all")); renderServices(); updBar(); window.scrollTo(0, document.body.scrollHeight); };
 
-/* ================= 會員備註 ================= */
-function renderMembers(){
-  const q = $("mq").value.trim().toLowerCase();
-  const list = S.members.filter(m => !q || (m["姓名"] + m["電話"]).toLowerCase().includes(q));
-  $("mlist").innerHTML = list.length ? list.map(m => {
-    const n = S.bookings.filter(b => b["電話"] === m["電話"] && b["狀態"] !== "已取消").length;
+$("sAdd").onclick=()=>{
+  svc.push({
+    "服務名稱":"",
+    "價格":"",
+    "課程分鐘":"",
+    "緩衝分鐘":"0",
+    "狀態":"啟用"
+  });
+
+  SF="all";
+  document.querySelectorAll("#sf .pill").forEach(x=>{
+    x.classList.toggle("on",x.dataset.f==="all");
+  });
+
+  renderServices();
+  updBar();
+  window.scrollTo(0,document.body.scrollHeight);
+};
+
+/* 會員備註 */
+function renderMembers() {
+  const q=$("mq").value.trim().toLowerCase();
+  const list=S.members.filter(m=>!q||(m["姓名"]+m["電話"]).toLowerCase().includes(q));
+
+  $("mlist").innerHTML=list.length?list.map(m=>{
+    const n=S.bookings.filter(b=>b["電話"]===m["電話"]&&b["狀態"]!=="已取消").length;
+
     return `<div class="card">
-      <div class="row sp"><b>${esc(m["姓名"])}</b><span class="mute">預約 ${n} 次</span></div>
-      <div class="mute"><a href="tel:${esc(fixPhone(m["電話"]))}">${esc(fixPhone(m["電話"]))}</a>　首次 ${esc(m["首次預約日期"])}</div>
-      <textarea rows="2" data-r="${m._row}" placeholder="寫下備註，例如偏好、提醒事項…">${esc(m["備註"])}</textarea></div>`;
-  }).join("") : '<p class="mute">沒有符合的會員。</p>';
+      <div class="row sp">
+        <b>${esc(m["姓名"])}</b>
+        <span class="mute">預約 ${n} 次</span>
+      </div>
+      <div class="mute" style="margin-top:5px">
+        <a href="tel:${esc(fixPhone(m["電話"]))}">${esc(fixPhone(m["電話"]))}</a>
+       　首次 ${esc(m["首次預約日期"])}
+      </div>
+      <textarea rows="2" data-r="${m._row}" placeholder="寫下備註，例如偏好、提醒事項…">${esc(m["備註"])}</textarea>
+    </div>`;
+  }).join(""):'<p class="mute">沒有符合的會員。</p>';
 }
-$("mq").oninput = renderMembers;
-$("mlist").onchange = async e => {
-  const t = e.target.closest("textarea[data-r]"); if (!t) return;
-  const m = S.members.find(x => String(x._row) === t.dataset.r), note = t.value;
-  try { await api("saveMember", {row:m._row, name:m["姓名"], phone:m["電話"], note}); m["備註"] = note; toast("備註已儲存"); }
-  catch(err) { toast(err.message); }
-};
 
-/* ================= 儲存列 ================= */
-function updBar(){
-  const bar = $("bar"), b = $("save");
-  if (tab === "hours" && dirty.size) { bar.hidden = false; b.textContent = `儲存營業時間（${dirty.size} 天）`; }
-  else if (tab === "services" && svcNorm(svc) !== svcNorm(S.services)) { bar.hidden = false; b.textContent = "儲存服務項目"; }
-  else bar.hidden = true;
-}
-$("save").onclick = async () => {
-  const b = $("save"); b.disabled = true;
+$("mq").oninput=renderMembers;
+
+$("mlist").onchange=async e=>{
+  const t=e.target.closest("textarea[data-r]");
+  if (!t) return;
+
+  const m=S.members.find(x=>String(x._row)===t.dataset.r);
+  const note=t.value;
+
   try {
-    if (tab === "hours") {
-      await api("saveHours", {rows:[...dirty.values()]}); dirty.clear();
-    } else {
-      if (!svc.length && !confirm("服務項目會全部清空，確定嗎？")) { b.disabled = false; return; }
-      await api("saveServices", {list: svc.map(s => Object.fromEntries(SK.map(k => [k, s[k]])))});
-    }
-    await load(); toast("已儲存");
-  } catch(e) { toast(e.message); }
-  b.disabled = false; updBar();
+    await api("saveMember",{row:m._row,name:m["姓名"],phone:m["電話"],note});
+    m["備註"]=note;
+    toast("備註已儲存");
+  } catch(err) {
+    toast(err.message);
+  }
 };
 
-function renderAll(){ renderBookings(); renderHours(); renderServices(); renderMembers(); updBar(); }
+/* 儲存 */
+function updBar() {
+  const bar=$("bar"),b=$("save");
+
+  if (tab==="hours"&&dirty.size) {
+    bar.hidden=false;
+    b.textContent=`儲存營業時間（${dirty.size} 天）`;
+  } else if (tab==="services"&&svcNorm(svc)!==svcNorm(S.services)) {
+    bar.hidden=false;
+    b.textContent="儲存服務項目";
+  } else {
+    bar.hidden=true;
+  }
+}
+
+$("save").onclick=async()=>{
+  const b=$("save");
+  b.disabled=true;
+
+  try {
+    if (tab==="hours") {
+      await api("saveHours",{rows:[...dirty.values()]});
+      dirty.clear();
+    } else {
+      if (!svc.length&&!confirm("服務項目會全部清空，確定嗎？")) {
+        b.disabled=false;
+        return;
+      }
+
+      await api("saveServices",{
+        list:svc.map(s=>Object.fromEntries(SK.map(k=>[k,s[k]])))
+      });
+    }
+
+    await load();
+    toast("已儲存");
+  } catch(e) {
+    toast(e.message);
+  }
+
+  b.disabled=false;
+  updBar();
+};
+
+function renderAll() {
+  renderBookings();
+  renderHours();
+  renderServices();
+  renderMembers();
+  updBar();
+}
 </script>
 </body>
 </html>
