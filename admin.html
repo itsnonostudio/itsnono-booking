@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>預約後台</title>
+<style>
+:root{--bg:#EEF2F6;--card:#fff;--ink:#1F2A44;--mute:#6B7685;--line:#D8DFE8;--acc:#2F7F79;--acc-ink:#fff;--warn:#B7791F;--bad:#C0392B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121A26;--card:#1B2535;--ink:#E8EDF4;--mute:#97A3B3;--line:#2B384C;--acc:#5FB8AE;--acc-ink:#0E1A18;--warn:#E0B15A;--bad:#F28B82}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 system-ui,-apple-system,"Noto Sans TC","PingFang TC",sans-serif}
+main{max-width:560px;margin:0 auto;padding:20px 14px 90px}
+h1{font-size:22px;margin:2px 0 0}
+.brand{color:var(--acc);font-size:13px;font-weight:600}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+nav{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px}
+nav button{flex:1;white-space:nowrap;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:500 14px inherit;font-family:inherit;cursor:pointer}
+nav button.on{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sp{justify-content:space-between}
+.mute{color:var(--mute);font-size:13px}
+input,select{padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:16px inherit;font-family:inherit;min-width:0}
+input.w{flex:1}
+button.b{padding:9px 14px;border-radius:9px;border:0;background:var(--acc);color:var(--acc-ink);font:600 14px inherit;font-family:inherit;cursor:pointer}
+button.g{background:none;border:1px solid var(--line);color:var(--ink);font-weight:500}
+button.d{background:none;border:1px solid var(--bad);color:var(--bad)}
+button:disabled{opacity:.4;cursor:default}
+.sm{padding:6px 10px;font-size:13px}
+.tag{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
+.t-待確認{color:var(--warn)}.t-已預約{color:var(--acc)}.t-已取消{color:var(--mute)}
+.hr{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.hr:last-child{border:0}
+.hr b{width:92px;flex:none;font-weight:500;font-size:14px}
+.hr input{flex:1}
+.bar{position:fixed;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}
+.bar .in{max-width:560px;margin:0 auto}
+.bar button{width:100%;padding:12px}
+details summary{cursor:pointer;font-weight:600}
+.wd label{display:inline-flex;gap:3px;align-items:center;margin-right:8px}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:14px;max-width:90%;z-index:9}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<div id="login">
+  <div class="brand">ITSNONO_STUDIO</div>
+  <h1>預約後台</h1>
+  <p class="mute">輸入後台密碼</p>
+  <div class="row"><input id="pw" type="password" class="w" autocomplete="current-password"><button class="b" id="go">登入</button></div>
+</div>
+
+<div id="app" hidden>
+  <header><div><div class="brand">ITSNONO_STUDIO</div><h1>預約後台</h1></div><button class="b g sm" id="out">登出</button></header>
+  <nav id="tabs">
+    <button data-t="bookings" class="on">預約</button><button data-t="hours">營業時間</button><button data-t="services">服務</button><button data-t="members">會員</button>
+  </nav>
+
+  <section id="p-bookings">
+    <div class="row" style="margin-bottom:10px">
+      <select id="bf"><option value="all">全部狀態</option><option>待確認</option><option>已預約</option><option>已取消</option></select>
+      <label class="mute"><input type="checkbox" id="bpast"> 含過去</label>
+    </div>
+    <div id="blist"></div>
+  </section>
+
+  <section id="p-hours" hidden>
+    <div class="card"><details>
+      <summary>批次設定多天</summary>
+      <div class="row" style="margin-top:10px"><input type="date" id="bStart"><span>到</span><input type="date" id="bEnd"></div>
+      <div class="wd" id="wdBox" style="margin:10px 0">
+        <label><input type="checkbox" value="1">一</label><label><input type="checkbox" value="2">二</label><label><input type="checkbox" value="3">三</label><label><input type="checkbox" value="4">四</label><label><input type="checkbox" value="5">五</label><label><input type="checkbox" value="6">六</label><label><input type="checkbox" value="0">日</label>
+      </div>
+      <div class="row"><input id="bSlots" class="w" placeholder="10:00,14:00（留空＝休息）"><button class="b" id="bAdd">加入</button></div>
+    </details></div>
+    <div class="card" id="hlist"></div>
+    <p class="mute">時間用半形逗號分隔，例如 10:00,14:00；留空代表當天休息。</p>
+  </section>
+
+  <section id="p-services" hidden>
+    <div id="slist"></div>
+    <div class="row"><button class="b g" id="sAdd">新增服務</button></div>
+    <p class="mute">服務不能刪除，不再提供請改成「停用」。</p>
+  </section>
+
+  <section id="p-members" hidden>
+    <input id="mq" class="w" style="width:100%;margin-bottom:10px" placeholder="搜尋姓名或電話">
+    <div id="mlist"></div>
+  </section>
+
+  <div class="bar" id="bar" hidden><div class="in"><button class="b" id="save"></button></div></div>
+</div>
+<div id="toast" hidden></div>
+</main>
+
+<script>
+const GAS_URL = "貼上你的 Web App 網址";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const today = () => new Date().toLocaleDateString("sv-SE", {timeZone:"Asia/Taipei"});
+let pw = ""; try { pw = sessionStorage.getItem("pw") || ""; } catch(e) {}
+let S = {hours:[], services:[], bookings:[], members:[]};
+let svc = [], dirty = new Map(), tab = "bookings", tt;
+
+function toast(m){ const t=$("toast"); t.textContent=m; t.hidden=false; clearTimeout(tt); tt=setTimeout(()=>t.hidden=true,2800); }
+
+async function api(action, data = {}) {
+  if (GAS_URL.indexOf("http") !== 0) throw new Error("請先在 admin.html 設定 GAS_URL");
+  const res = await fetch(GAS_URL, {method:"POST", body: JSON.stringify({pw, action, ...data})});
+  const j = await res.json();
+  if (!j.ok) throw new Error(j.error || "發生錯誤");
+  return j;
+}
+
+async function load(){
+  S = await api("getAll");
+  svc = S.services.map(s => ({...s}));
+  renderAll();
+}
+
+async function login(){
+  pw = $("pw").value || pw;
+  try {
+    await api("login");
+    try { sessionStorage.setItem("pw", pw); } catch(e) {}
+    await load();
+    $("login").hidden = true; $("app").hidden = false;
+  } catch(e) { pw = ""; toast(e.message); }
+}
+$("go").onclick = login;
+$("pw").onkeydown = e => { if (e.key === "Enter") login(); };
+$("out").onclick = () => { try { sessionStorage.removeItem("pw"); } catch(e) {} location.reload(); };
+if (pw) login();
+
+$("tabs").onclick = e => {
+  const b = e.target.closest("button[data-t]"); if (!b) return;
+  tab = b.dataset.t;
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  ["bookings","hours","services","members"].forEach(t => $("p-"+t).hidden = t !== tab);
+  updBar();
+};
+
+/* ---- 預約 ---- */
+const fixPhone = p => /^9\d{8}$/.test(p) ? "0"+p : p;
+function renderBookings(){
+  const f = $("bf").value, past = $("bpast").checked, t = today();
+  const list = S.bookings
+    .filter(b => (f === "all" || b["狀態"] === f) && (past || b["日期"] >= t))
+    .sort((a,b) => (a["日期"]+a["時間"]).localeCompare(b["日期"]+b["時間"]));
+  $("blist").innerHTML = list.length ? list.map(b => {
+    const st = b["狀態"];
+    return `<div class="card">
+      <div class="row sp"><b>${esc(b["日期"])} ${esc(b["時間"])}</b><span class="tag t-${esc(st)}">${esc(st)}</span></div>
+      <div>${esc(b["姓名"])}・<a href="tel:${esc(fixPhone(b["電話"]))}">${esc(fixPhone(b["電話"]))}</a></div>
+      <div class="mute">${esc(b["服務"])}　$${esc(b["價格"])}${b["訂金後五碼"] ? "　後五碼 "+esc(b["訂金後五碼"]) : ""}</div>
+      ${b["備註"] ? `<div class="mute">備註：${esc(b["備註"])}</div>` : ""}
+      <div class="row" style="margin-top:8px">
+        <button class="b sm" data-act="ok" data-id="${esc(b["預約編號"])}" ${st==="已預約"?"disabled":""}>確認</button>
+        <button class="b sm d" data-act="no" data-id="${esc(b["預約編號"])}" ${st==="已取消"?"disabled":""}>取消</button>
+      </div></div>`;
+  }).join("") : '<p class="mute">沒有符合的預約。</p>';
+}
+$("bf").onchange = $("bpast").onchange = renderBookings;
+$("blist").onclick = async e => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  const ok = b.dataset.act === "ok", id = b.dataset.id;
+  const bk = S.bookings.find(x => String(x["預約編號"]) === id);
+  if (!ok && !confirm(`確定取消 ${bk["姓名"]} ${bk["日期"]} ${bk["時間"]} 的預約？`)) return;
+  b.disabled = true;
+  try {
+    const status = ok ? "已預約" : "已取消";
+    await api("setStatus", {id, status});
+    bk["狀態"] = status; renderBookings(); toast(ok ? "已確認" : "已取消");
+  } catch(err) { toast(err.message); b.disabled = false; }
+};
+
+/* ---- 營業時間 ---- */
+const dow = d => new Date(d + "T00:00:00").getDay();
+const addDay = d => { const x = new Date(d + "T00:00:00Z"); x.setUTCDate(x.getUTCDate()+1); return x.toISOString().slice(0,10); };
+function parseSlots(s){
+  const tk = s.split(/[,，\s]+/).filter(Boolean);
+  if (tk.some(x => !/^\d{1,2}:\d{2}$/.test(x))) return null;
+  return tk.map(x => x.padStart(5, "0"));
+}
+function renderHours(){
+  const t = today();
+  const list = S.hours.filter(h => h.date >= t).sort((a,b) => a.date.localeCompare(b.date));
+  $("hlist").innerHTML = list.length ? list.map(h => {
+    const v = dirty.has(h.date) ? dirty.get(h.date).slots : h.slots;
+    return `<div class="hr"><b>${h.date.slice(5).replace("-","/")}（${"日一二三四五六"[dow(h.date)]}）</b><input data-d="${h.date}" value="${esc(v)}" placeholder="休息"></div>`;
+  }).join("") : '<p class="mute">還沒有設定日期，用上方「批次設定」加入。</p>';
+}
+$("hlist").oninput = e => {
+  const i = e.target.closest("input[data-d]"); if (!i) return;
+  dirty.set(i.dataset.d, {date:i.dataset.d, slots:i.value, note:null}); updBar();
+};
+$("bAdd").onclick = () => {
+  const a = $("bStart").value, b = $("bEnd").value;
+  const wds = [...document.querySelectorAll("#wdBox input:checked")].map(x => +x.value);
+  const p = parseSlots($("bSlots").value);
+  if (!a || !b || a > b || !wds.length || p === null) return toast("請填日期範圍、勾選星期，時間格式如 10:00,14:00");
+  let n = 0, d = a;
+  while (d <= b && n < 120) {
+    if (wds.includes(dow(d))) {
+      const s = p.join(",");
+      dirty.set(d, {date:d, slots:s, note:null});
+      const ex = S.hours.find(h => h.date === d);
+      if (ex) ex.slots = s; else S.hours.push({date:d, slots:s, note:""});
+      n++;
+    }
+    d = addDay(d);
+  }
+  renderHours(); updBar(); toast(`已加入 ${n} 天，記得按下方儲存`);
+};
+
+/* ---- 服務 ---- */
+const FIELDS = [["服務名稱","名稱","text"],["價格","價格","number"],["課程分鐘","課程分鐘","number"],["緩衝分鐘","緩衝分鐘","number"]];
+function renderServices(){
+  $("slist").innerHTML = svc.map((s,i) => `<div class="card">
+    ${FIELDS.map(([k,l,ty]) => `<div class="row" style="margin-bottom:6px"><span class="mute" style="width:72px">${l}</span><input class="w" type="${ty}" ${ty==="number"?'inputmode="numeric"':""} data-i="${i}" data-k="${k}" value="${esc(s[k])}"></div>`).join("")}
+    <div class="row"><span class="mute" style="width:72px">狀態</span><select data-i="${i}" data-k="狀態"><option ${s["狀態"]==="啟用"?"selected":""}>啟用</option><option ${s["狀態"]==="停用"?"selected":""}>停用</option></select></div>
+  </div>`).join("");
+}
+$("slist").oninput = $("slist").onchange = e => {
+  const el = e.target.closest("[data-i]"); if (!el) return;
+  svc[+el.dataset.i][el.dataset.k] = el.value; updBar();
+};
+$("sAdd").onclick = () => { svc.push({"服務名稱":"","價格":"","課程分鐘":"","緩衝分鐘":"0","狀態":"啟用","_new":1}); renderServices(); updBar(); };
+const svcDirty = () => svc.length !== S.services.length || svc.some((s,i) => FIELDS.concat([["狀態"]]).some(([k]) => String(s[k]) !== String((S.services[i]||{})[k])));
+
+/* ---- 會員 ---- */
+function renderMembers(){
+  const q = $("mq").value.trim().toLowerCase();
+  const list = S.members.filter(m => !q || (m["姓名"]+m["電話"]).toLowerCase().includes(q));
+  $("mlist").innerHTML = list.length ? list.map(m => `<div class="card">
+    <div class="row sp"><b>${esc(m["姓名"])}</b><span class="mute">首次 ${esc(m["首次預約日期"])}</span></div>
+    <div><a href="tel:${esc(fixPhone(m["電話"]))}">${esc(fixPhone(m["電話"]))}</a></div>
+    ${m["備註"] ? `<div class="mute">${esc(m["備註"])}</div>` : ""}</div>`).join("") : '<p class="mute">沒有符合的會員。</p>';
+}
+$("mq").oninput = renderMembers;
+
+/* ---- 儲存列 ---- */
+function updBar(){
+  const bar = $("bar"), b = $("save");
+  if (tab === "hours" && dirty.size) { bar.hidden = false; b.textContent = `儲存營業時間（${dirty.size} 天）`; }
+  else if (tab === "services" && svcDirty()) { bar.hidden = false; b.textContent = "儲存服務項目"; }
+  else bar.hidden = true;
+}
+$("save").onclick = async () => {
+  const b = $("save"); b.disabled = true;
+  try {
+    if (tab === "hours") {
+      const rows = [];
+      for (const r of dirty.values()) {
+        const p = parseSlots(r.slots);
+        if (p === null) throw new Error(`${r.date} 的時間格式不對，請用 10:00,14:00`);
+        rows.push({date:r.date, slots:p.join(","), note:r.note});
+      }
+      await api("saveHours", {rows}); dirty.clear();
+    } else {
+      await api("saveServices", {list: svc.map(({_new, _row, ...s}) => s)});
+    }
+    await load(); toast("已儲存");
+  } catch(e) { toast(e.message); }
+  b.disabled = false; updBar();
+};
+
+function renderAll(){ renderBookings(); renderHours(); renderServices(); renderMembers(); updBar(); }
+</script>
+</body>
+</html>
