@@ -92,16 +92,19 @@ main {
   font-family: system-ui, sans-serif;
 }
 
-/* 登入 */
-#login {
+/* 登入 / 修改密碼 */
+#login,
+#pwscreen {
   padding-top: 46px;
 }
 
-#login > .logo {
+#login > .logo,
+#pwscreen > .logo {
   padding: 0 4px 20px;
 }
 
-#login .card {
+#login .card,
+#pwscreen .card {
   margin-top: 12px;
 }
 
@@ -598,10 +601,43 @@ a {
   </div>
 </div>
 
+<!-- 修改密碼（第一次用預設密碼登入時強制出現；登入後也可從右上角進入） -->
+<div id="pwscreen" hidden>
+  <div class="logo">ITSNONO<small>預約系統管理</small></div>
+  <div class="card" style="margin-top:28px">
+    <p id="pwtitle" style="margin:0 0 4px;font-weight:600"></p>
+    <p class="mute" id="pwhint" style="margin-top:0"></p>
+
+    <div id="pw-old-wrap">
+      <p class="mute">目前的密碼</p>
+      <input id="pw-old" type="password" style="width:100%;margin-bottom:12px" autocomplete="current-password">
+    </div>
+
+    <div id="pw-code-wrap" hidden>
+      <p class="mute">設定碼（請到試算表「後台設定」分頁，複製 B1 儲存格）</p>
+      <input id="pw-code" style="width:100%;margin-bottom:12px" autocomplete="off">
+    </div>
+
+    <p class="mute">新密碼（至少 8 個字元）</p>
+    <input id="pw-new" type="password" style="width:100%;margin-bottom:12px" autocomplete="new-password">
+
+    <p class="mute">確認新密碼</p>
+    <input id="pw-new2" type="password" style="width:100%;margin-bottom:14px" autocomplete="new-password">
+
+    <div class="row">
+      <button class="b" id="pw-save">儲存</button>
+      <button class="b g" id="pw-cancel" hidden>取消</button>
+    </div>
+  </div>
+</div>
+
 <div id="app" hidden>
   <div class="top">
     <div class="logo">ITSNONO<small>預約系統管理</small></div>
-    <button class="b g sm" id="out">登出</button>
+    <div class="row">
+      <button class="b g sm" id="chg">修改密碼</button>
+      <button class="b g sm" id="out">登出</button>
+    </div>
   </div>
 
   <h1 id="title"></h1>
@@ -737,8 +773,12 @@ const dayOf = (ms,d) => ms.slice(0,8)+String(d).padStart(2,"0");
 const fixPhone = p => /^9\d{8}$/.test(p) ? "0"+p : p;
 const mLabel = ms => `${ms.slice(0,4)} 年 ${+ms.slice(5,7)} 月`;
 
-let pw = "";
-try { pw = sessionStorage.getItem("pw") || ""; } catch(e) {}
+// 登入狀態：只存後端發的 session，不再存密碼
+let session = "";
+try {
+  session = sessionStorage.getItem("session") || "";
+  sessionStorage.removeItem("pw"); // 清掉舊版存的明文密碼
+} catch(e) {}
 
 let S = {hours:[],services:[],bookings:[],members:[]};
 let svc = [], dirty = new Map(), tab = "bookings", tt;
@@ -758,17 +798,48 @@ function toast(m) {
   tt = setTimeout(()=>t.hidden=true,2800);
 }
 
-async function api(action,data={}) {
+/* ---------- API ---------- */
+
+// 不帶 session 的原始請求（登入用）
+async function post(action,data={}) {
   if (GAS_URL.indexOf("http") !== 0) {
     throw new Error("請先在 admin.html 設定 GAS_URL");
   }
   const res = await fetch(GAS_URL,{
     method:"POST",
-    body:JSON.stringify({pw,action,...data})
+    body:JSON.stringify({action,...data})
   });
-  const j = await res.json();
-  if (!j.ok) throw new Error(j.error || "發生錯誤");
+  return res.json();
+}
+
+// 帶 session 的請求；過期或被要求先改密碼時回到登入頁
+async function api(action,data={}) {
+  const j = await post(action,{session,...data});
+  if (!j.ok) {
+    if (j.code === "SESSION_EXPIRED" || j.code === "MUST_CHANGE") {
+      dropSession();
+      showLogin();
+    }
+    throw new Error(j.error || "發生錯誤");
+  }
   return j;
+}
+
+function setSession(t) {
+  session = t;
+  try { sessionStorage.setItem("session",t); } catch(e) {}
+}
+
+function dropSession() {
+  session = "";
+  try { sessionStorage.removeItem("session"); } catch(e) {}
+}
+
+function showLogin() {
+  $("app").hidden = true;
+  $("pwscreen").hidden = true;
+  $("login").hidden = false;
+  $("pw").value = "";
 }
 
 async function load() {
@@ -777,32 +848,109 @@ async function load() {
   renderAll();
 }
 
+/* ---------- 登入 / 修改密碼 ---------- */
+
+async function enterApp() {
+  await load();
+  $("login").hidden = true;
+  $("pwscreen").hidden = true;
+  $("app").hidden = false;
+  setTab("bookings");
+}
+
 async function login() {
-  pw = $("pw").value || pw;
+  const typed = $("pw").value;
+  if (!typed) return;
+
+  $("go").disabled = true;
   try {
-    await api("login");
-    try { sessionStorage.setItem("pw",pw); } catch(e) {}
-    await load();
-    $("login").hidden = true;
-    $("app").hidden = false;
-    setTab("bookings");
+    const r = await post("login",{pw:typed});
+    if (!r.ok) throw new Error(r.error || "登入失敗");
+
+    setSession(r.session);
+    $("pw").value = "";
+
+    if (r.mustChange) {
+      // 還在用預設密碼：必須先修改才能使用後台
+      openPwScreen({forced:true,oldPw:typed,needCode:r.requireSetupCode});
+    } else {
+      await enterApp();
+    }
   } catch(e) {
-    pw = "";
     toast(e.message);
   }
+  $("go").disabled = false;
 }
+
+let PW = {forced:false,oldPw:"",needCode:false};
+
+function openPwScreen(o) {
+  PW = {forced:!!o.forced,oldPw:o.oldPw || "",needCode:!!o.needCode};
+
+  $("login").hidden = true;
+  $("app").hidden = true;
+  $("pwscreen").hidden = false;
+
+  $("pwtitle").textContent = PW.forced ? "請先修改密碼" : "修改密碼";
+  $("pwhint").textContent = PW.forced
+    ? "你正在使用預設密碼，請設定一組新的後台密碼。"
+    : "";
+  $("pw-old-wrap").hidden = PW.forced;
+  $("pw-code-wrap").hidden = !PW.needCode;
+  $("pw-cancel").hidden = PW.forced;
+
+  ["pw-old","pw-code","pw-new","pw-new2"].forEach(id => $(id).value = "");
+}
+
+$("chg").onclick = () => openPwScreen({});
+
+$("pw-cancel").onclick = () => {
+  $("pwscreen").hidden = true;
+  $("app").hidden = false;
+};
+
+$("pw-save").onclick = async () => {
+  const b = $("pw-save");
+  b.disabled = true;
+
+  try {
+    const r = await api("changePassword",{
+      oldPassword: PW.forced ? PW.oldPw : $("pw-old").value,
+      setupCode: PW.needCode ? $("pw-code").value : "",
+      newPassword: $("pw-new").value,
+      confirm: $("pw-new2").value
+    });
+
+    setSession(r.session); // 換了密碼，舊 session 失效，改用新的
+    PW.oldPw = "";
+    toast("密碼已更新");
+
+    if (PW.forced) {
+      await enterApp();
+    } else {
+      $("pwscreen").hidden = true;
+      $("app").hidden = false;
+    }
+  } catch(e) {
+    toast(e.message);
+  }
+
+  b.disabled = false;
+};
 
 $("go").onclick = login;
 $("pw").onkeydown = e => {
   if (e.key === "Enter") login();
 };
 
-$("out").onclick = () => {
-  try { sessionStorage.removeItem("pw"); } catch(e) {}
+$("out").onclick = async () => {
+  try { await post("logout",{session}); } catch(e) {}
+  dropSession();
   location.reload();
 };
 
-if (pw) login();
+// 重新整理頁面時，若 session 還有效就直接進後台
+if (session) enterApp().catch(()=>{});
 
 function setTab(t) {
   tab = t;
